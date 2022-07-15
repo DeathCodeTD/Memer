@@ -1,0 +1,16 @@
+#!/bin/bash
+START=1
+read -p 'what meme: ' meme
+read -p 'how many pages: ' pages
+meme=${meme// /-}
+echo "gathering meme links to links.txt..."
+for (( c=$START; c<=$pages; c++ ))
+do 
+	lynx -listonly -nonumbers -dump https://knowyourmeme.com/memes/$meme/photos/page/$c | grep "$meme$" >> links.txt
+done
+
+while read p; do
+	image_link=$(lynx -listonly -nonumbers -dump $p | grep -E "png$|jpeg$|gif$|jpg$")
+	echo $image_link
+	wget $image_link
+done <links.txt
